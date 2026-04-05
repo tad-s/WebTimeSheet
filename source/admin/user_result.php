@@ -560,6 +560,7 @@ try {
                     <th class="fix-col">出勤</th>
                     <th class="fix-col">退勤</th>
                     <th class="fix-col">休憩</th>
+                    <th class="fix-col">勤務時間</th>
                     <th>備考</th>
                     <th class="fix-col"></th>
                 </tr>
@@ -571,6 +572,7 @@ try {
                     $end_time = '';
                     $break_time = '';
                     $work_type = '';
+                    $work_time = '';
                     $comment = '';
                     $comment_long = '';
 
@@ -593,6 +595,13 @@ try {
                             $work_type = getWorkTypeName($work['work_type']);
                         }
 
+                        if ($start_time && $end_time) {
+                            $work_minutes = calculateWorkMinutes_local($start_time, $end_time, $break_time);
+                            if ($work_minutes > 0) {
+                                $work_time = minutesToTime_local($work_minutes);
+                            }
+                        }
+
                         if ($work['comment']) {
                             $comment = mb_strimwidth($work['comment'], 0, 40, '…');
                             $comment_long = $work['comment'];
@@ -606,6 +615,7 @@ try {
                         <td><?php echo $start_time ?></td>
                         <td><?php echo $end_time ?></td>
                         <td><?php echo $break_time ?></td>
+                        <td><?php echo $work_time ?></td>
                         <td><?php echo h($comment) ?></td>
                         <td class="d-none"><?php echo h($comment_long) ?></td>
                         <td><button type="button" class="btn btn-default h-auto py-0" data-toggle="modal" data-target="#inputModal" data-day="<?php echo $yyyymm . '-' . sprintf('%02d', $i) ?>"><i class="fa-solid fa-pencil"></i></button></td>
@@ -704,7 +714,7 @@ try {
             var start_time = button.closest('tr').children('td')[1].innerText
             var end_time = button.closest('tr').children('td')[2].innerText
             var break_time = button.closest('tr').children('td')[3].innerText
-            var comment = button.closest('tr').children('td')[5].innerText
+            var comment = button.closest('tr').children('td')[6].innerText
 
             //取得したデータをモーダルの各欄に設定
             $('#modal_day').text(day)
