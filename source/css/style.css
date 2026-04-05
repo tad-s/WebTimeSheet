@@ -1,0 +1,98 @@
+
+body{
+    padding: 40px 0;
+    color: #707070;
+    }
+    
+    .form-login{
+        width: 100%;
+        max-width: 500px;
+        margin: auto;
+        padding: 15px;
+    }
+    
+    .form-login input{
+    max-width: 300px;
+    margin: auto;
+    height: 50px;
+    }
+    
+    .btn{
+        height: 50px;
+    }
+
+    .bbb{
+        height: 40px;
+    }
+    
+
+    .form-time-table{
+        width: 90%;
+        margin: auto;
+        padding: 15px;
+    }
+        
+    .form-time-table select{
+        max-width: 200px;
+        height: 50px;
+    }
+
+    .modal-footer{
+        justify-content: center;
+    }
+
+    .modal-header.close{
+        padding: 0;
+        margin: 0;
+    }
+
+    .bg-green{
+        background-color: #00B0B7;
+    }
+
+    .form-user-list{
+        max-width: 700px;
+        margin: auto;
+        padding: 15px;
+    }
+
+td{
+ text-align: center;
+}
+
+th{
+    text-align: center;
+}
+
+.fix-col{
+    width: 10%;
+}
+
+
+.tyuuou{
+text-align:  center;     
+}
+
+.field-work-section {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 0.375rem;
+    padding: 15px;
+    margin-top: 15px;
+}
+
+.fare-table {
+    font-size: 0.9rem;
+}
+
+.fare-table td,
+.fare-table th {
+    padding: 0.5rem 0.3rem;
+    vertical-align: middle;
+}
+
+.btn-edit {
+    font-size: 0.8rem;
+    padding: 2px 8px;
+    margin-right: 2px;
+}
