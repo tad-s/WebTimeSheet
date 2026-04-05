@@ -566,12 +566,22 @@ try {
                 </tr>
             </thead>
             <tbody>
+                <?php
+                $total_work_minutes = 0;
+                $total_work_days = 0;
+                $work_type_options = getWorkTypeOptions();
+                $work_type_counts = array();
+                foreach ($work_type_options as $key => $value) {
+                    $work_type_counts[$key] = 0;
+                }
+                ?>
                 <?php for ($i = 1; $i <= $day_count; $i++) : ?>
                     <?php
                     $start_time = '';
                     $end_time = '';
                     $break_time = '';
                     $work_type = '';
+                    $work_type_value = 0;
                     $work_time = '';
                     $comment = '';
                     $comment_long = '';
@@ -592,13 +602,19 @@ try {
                         }
 
                         if ($work['work_type']) {
-                            $work_type = getWorkTypeName($work['work_type']);
+                            $work_type_value = (int)$work['work_type'];
+                            $work_type = getWorkTypeName($work_type_value);
+                            if (isset($work_type_counts[$work_type_value])) {
+                                $work_type_counts[$work_type_value]++;
+                            }
                         }
 
                         if ($start_time && $end_time) {
                             $work_minutes = calculateWorkMinutes_local($start_time, $end_time, $break_time);
                             if ($work_minutes > 0) {
                                 $work_time = minutesToTime_local($work_minutes);
+                                $total_work_minutes += $work_minutes;
+                                $total_work_days++;
                             }
                         }
 
@@ -623,6 +639,39 @@ try {
                 <?php endfor; ?>
             </tbody>
         </table>
+
+        <!-- 集計表 -->
+        <div class="mt-4 p-3 bg-light border rounded">
+            <h5 class="mb-3">勤務集計</h5>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h6 class="card-title">勤務時間・日数</h6>
+                            <p class="card-text">
+                                <strong>総勤務時間:</strong> <?php echo $total_work_minutes > 0 ? minutesToTime_local($total_work_minutes) : '0:00' ?><br>
+                                <strong>総勤務日数:</strong> <?php echo $total_work_days ?>日
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-body">
+                            <h6 class="card-title">区分別集計</h6>
+                            <div class="row">
+                                <?php foreach ($work_type_options as $key => $value) : ?>
+                                    <div class="col-6 col-md-3 mb-2">
+                                        <small><strong><?php echo h($value) ?>:</strong> <?php echo $work_type_counts[$key] ?>日</small>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <input type="hidden" name="id" value="<?= $user_id ?>">
     </form>
 
