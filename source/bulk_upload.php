@@ -29,7 +29,7 @@ try {
     $bulk_data = '';
 
     // ★【15分単位処理関数追加】出勤時間用の15分単位切り上げ関数
-    function roundUpTo15Minutes_24h($time) {
+    if (!function_exists('roundUpTo15Minutes_24h')) { function roundUpTo15Minutes_24h($time) {
         if (!$time || $time === '00:00:00' || $time === '00:00') {
             return $time;
         }
@@ -55,10 +55,10 @@ try {
         }
         
         return sprintf('%02d:%02d', $hours, $roundedMinutes);
-    }
+    } }
 
     // ★【15分単位処理関数追加】退勤時間用の15分単位切り捨て関数
-    function roundDownTo15Minutes_24h($time) {
+    if (!function_exists('roundDownTo15Minutes_24h')) { function roundDownTo15Minutes_24h($time) {
         if (!$time || $time === '00:00:00' || $time === '00:00') {
             return $time;
         }
@@ -75,8 +75,8 @@ try {
         $roundedMinutes = floor($minutes / 15) * 15;
         
         return sprintf('%02d:%02d', $hours, $roundedMinutes);
-    }
-    
+    } }
+
     // ファイルアップロードまたはテキスト入力の処理
     if (isset($_FILES['bulk_file']) && $_FILES['bulk_file']['error'] === UPLOAD_ERR_OK) {
         // ファイルアップロードの場合

@@ -46,21 +46,22 @@ try {
     $is_impersonating = isset($_SESSION['IS_IMPERSONATING']) && $_SESSION['IS_IMPERSONATING'];
     $impersonate_target_name = isset($_SESSION['IMPERSONATE_TARGET_NAME']) ? $_SESSION['IMPERSONATE_TARGET_NAME'] : '';
 
-    // 24時間表記対応の関数を追加
-    function format_time_24h($value) {
-        if (!$value || $value == '00:00:00' || $value == '00:00') {
-            return '';
+    // 24時間表記対応の関数を追加（functions.phpで未定義の場合のみ定義）
+    if (!function_exists('format_time_24h')) {
+        function format_time_24h($value) {
+            if (!$value || $value == '00:00:00' || $value == '00:00') {
+                return '';
+            }
+            $parts = explode(':', $value);
+            if (count($parts) >= 2) {
+                return sprintf('%d:%02d', (int)$parts[0], (int)$parts[1]);
+            }
+            return $value;
         }
-        // 24時間を超える時間をそのまま表示
-        $parts = explode(':', $value);
-        if (count($parts) >= 2) {
-            return sprintf('%d:%02d', (int)$parts[0], (int)$parts[1]);
-        }
-        return $value;
     }
 
     // ★出勤時間用の15分単位切り上げ関数を追加
-    function roundUpTo15Minutes_24h($time) {
+    if (!function_exists('roundUpTo15Minutes_24h')) { function roundUpTo15Minutes_24h($time) {
         if (!$time || $time === '00:00:00' || $time === '00:00') {
             return $time;
         }
@@ -86,9 +87,9 @@ try {
         }
         
         return sprintf('%02d:%02d', $hours, $roundedMinutes);
-    }
+    } }
 
-    function roundDownTo15Minutes_24h($time) {
+    if (!function_exists('roundDownTo15Minutes_24h')) { function roundDownTo15Minutes_24h($time) {
         if (!$time || $time === '00:00:00' || $time === '00:00') {
             return $time;
         }
@@ -105,9 +106,9 @@ try {
         $roundedMinutes = floor($minutes / 15) * 15;
         
         return sprintf('%02d:%02d', $hours, $roundedMinutes);
-    }
+    } }
 
-    function calculateWorkMinutes_24h($start_time, $end_time, $break_time) {
+    if (!function_exists('calculateWorkMinutes_24h')) { function calculateWorkMinutes_24h($start_time, $end_time, $break_time) {
         if (!$start_time || !$end_time) {
             return 0;
         }
@@ -127,7 +128,7 @@ try {
         
         $work_minutes = $end_minutes - $start_minutes - $break_minutes;
         return $work_minutes > 0 ? $work_minutes : 0;
-    }
+    } }
 
 
 // デバッグ用（管理者、編集フラグ確認用）
