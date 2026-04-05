@@ -98,16 +98,18 @@ function format_time($value)
 }
 
 // 24時間を超える時刻にも対応した時間フォーマット（CSV出力用）
-function format_time_24h($value)
-{
-    if (!$value || $value == '00:00:00') {
-        return '';
+if (!function_exists('format_time_24h')) {
+    function format_time_24h($value)
+    {
+        if (!$value || $value == '00:00:00') {
+            return '';
+        }
+        $parts = explode(':', $value);
+        if (count($parts) >= 2) {
+            return sprintf('%d:%02d', (int)$parts[0], (int)$parts[1]);
+        }
+        return $value;
     }
-    $parts = explode(':', $value);
-    if (count($parts) >= 2) {
-        return sprintf('%d:%02d', (int)$parts[0], (int)$parts[1]);
-    }
-    return $value;
 }
 
 //スクリプト対策でDBに登録するtextを確認
