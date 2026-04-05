@@ -822,8 +822,23 @@ try {
 
         <h1 class="h3 my-3">月別勤怠表</h1>
 
-<!--2025/10/30ボタン追加に伴うデザイン修正-->
-<div class="d-flex flex-wrap justify-content-end align-items-center mb-2">
+<!-- 月選択＋ハンバーガーボタン行 -->
+<div class="d-flex justify-content-between align-items-center mb-2">
+    <select class="form-control rounded-pill" style="max-width:130px;" name="m" onchange="submit(this.form)">
+        <option value="<?php echo date('Y-m') ?>"><?php echo date('Y/m') ?></option>
+        <?php for ($i = 1; $i < 12; $i++) : ?>
+            <?php $target_yyyymm = strtotime("-{$i}months"); ?>
+            <option value="<?php echo date('Y-m', $target_yyyymm) ?>" <?php if ($yyyymm == date('Y-m', $target_yyyymm)) echo 'selected' ?>><?php echo date('Y/m', $target_yyyymm) ?></option>
+        <?php endfor; ?>
+    </select>
+    <!-- ハンバーガーボタン（スマホのみ表示） -->
+    <button type="button" class="btn btn-outline-secondary btn-sm d-md-none"
+            data-toggle="collapse" data-target="#indexActionMenu" aria-expanded="false" aria-controls="indexActionMenu">
+        <i class="fas fa-bars"></i>
+    </button>
+</div>
+<!-- ボタン群（PC:常時表示／スマホ:ハンバーガーで折りたたみ） -->
+<div class="collapse d-md-flex flex-wrap justify-content-end align-items-center action-menu mb-2" id="indexActionMenu">
     <a class="btn btn-info mr-2 mb-1" href="fare.php?m=<?php echo urlencode($yyyymm) ?>">
         <i class="fas fa-train"></i> 交通費入力
     </a>
@@ -833,7 +848,6 @@ try {
     <a class="btn btn-info mr-2 mb-1" href="export_csv_field.php?m=<?php echo urlencode($yyyymm) ?>">
         <i class="fas fa-file-csv"></i> CSV出力(現場用)
     </a>
-    <!-- ★【なりすまし機能追加】なりすまし中はログアウトボタンを非表示 -->
     <?php if (!$is_impersonating): ?>
     <a class="btn btn-outline-primary mb-1" href="<?php echo SITE_URL ?>logout.php">ログアウト</a>
     <?php endif; ?>
@@ -863,15 +877,8 @@ try {
             <?php endif; ?>
         </div>
 -->
-        <select class="form-control rounded-pill mb-3" name="m" onchange="submit(this.form)">
-            <option value="<?php echo date('Y-m') ?>"><?php echo date('Y/m') ?></option>
-            <?php for ($i = 1; $i < 12; $i++) : ?>
-                <?php $target_yyyymm = strtotime("-{$i}months"); ?>
-                <option value="<?php echo date('Y-m', $target_yyyymm) ?>" <?php if ($yyyymm == date('Y-m', $target_yyyymm)) echo 'selected' ?>><?php echo date('Y/m', $target_yyyymm) ?></option>
-            <?php endfor; ?>
-        </select>
-
-        <table class="table table-bordered">
+        <div class="table-responsive">
+        <table class="table table-bordered mb-0">
             <thead>
                 <tr class="bg-light">
                     <th class="fix-col">日</th>
@@ -1071,6 +1078,7 @@ try {
                 <?php endfor; ?>
             </tbody>
         </table>
+        </div><!-- /.table-responsive -->
 
         <!-- 集計表 -->
         <div class="mt-4 p-3 bg-light border rounded">

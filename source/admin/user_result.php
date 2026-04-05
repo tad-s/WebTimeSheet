@@ -515,7 +515,7 @@ try {
 
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit-no">
+    <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
     <link href="../css/bootstrap.min.css" rel="stylesheet">
     <link href="../css/style.css" rel="stylesheet">
 
@@ -531,28 +531,36 @@ try {
 
         <h1 class="h3 my-3">月別勤怠表</h1>
 
-        <div class="float-left">
-            <select class="form-control rounded-pill mb-3" name="m" onchange="submit(this.form)">
+        <!-- 月選択＋ハンバーガーボタン行 -->
+        <div class="d-flex justify-content-between align-items-center flex-wrap mb-2">
+            <select class="form-control rounded-pill mb-1" style="max-width:130px;" name="m" onchange="submit(this.form)">
                 <option value="<?php echo date('Y-m') ?>"><?php echo date('Y/m') ?></option>
                 <?php for ($i = 1; $i < 12; $i++) : ?>
                     <?php $target_yyyymm = strtotime("-{$i}months"); ?>
                     <option value="<?php echo date('Y-m', $target_yyyymm) ?>" <?php if ($yyyymm == date('Y-m', $target_yyyymm)) echo 'selected' ?>><?php echo date('Y/m', $target_yyyymm) ?></option>
                 <?php endfor; ?>
             </select>
+            <!-- ハンバーガーボタン（スマホのみ表示） -->
+            <button type="button" class="btn btn-outline-secondary btn-sm d-md-none"
+                    data-toggle="collapse" data-target="#adminActionMenu" aria-expanded="false" aria-controls="adminActionMenu">
+                <i class="fas fa-bars"></i>
+            </button>
         </div>
-        <div class="float-right">
+        <!-- ボタン群（PC:常時表示／スマホ:ハンバーガーで折りたたみ） -->
+        <div class="collapse d-md-flex justify-content-end align-items-center action-menu mb-2" id="adminActionMenu">
             <a href="user_result.php?id=<?php echo $user_id ?>&csv=1&m=<?php echo $yyyymm ?>" class="btn btn-success rounded-pill px-4 mr-2">
                 <i class="fas fa-download"></i> CSV出力
             </a>
             <a href="fare_view.php?id=<?php echo $user_id ?>&m=<?php echo $yyyymm ?>" class="btn btn-info rounded-pill px-4 mr-2">
                 <i class="fas fa-train"></i> 交通費確認
             </a>
-            <a href="user_list.php"><button type="button" class="btn btn-secondary rounded-pill px-5">社員一覧に戻る</button></a>
+            <a href="user_list.php" class="btn btn-secondary rounded-pill px-4">社員一覧に戻る</a>
         </div>
 
 
 
-        <table class="table table-bordered">
+        <div class="table-responsive">
+        <table class="table table-bordered mb-0">
             <thead>
                 <tr class="bg-light">
                     <th class="fix-col">日</th>
@@ -639,6 +647,7 @@ try {
                 <?php endfor; ?>
             </tbody>
         </table>
+        </div><!-- /.table-responsive -->
 
         <!-- 集計表 -->
         <div class="mt-4 p-3 bg-light border rounded">

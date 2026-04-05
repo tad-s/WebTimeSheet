@@ -96,3 +96,30 @@ text-align:  center;
     padding: 2px 8px;
     margin-right: 2px;
 }
+
+/* ===== レスポンシブ対応（モバイル共通） ===== */
+@media (max-width: 767px) {
+    body {
+        padding: 0;
+    }
+    .form-time-table {
+        width: 100% !important;
+        border-radius: 0 !important;
+        margin: 0 !important;
+        padding: 8px !important;
+    }
+    .form-login {
+        border-radius: 0 !important;
+        margin: 0 !important;
+    }
+}
+
+/* ハンバーガーメニュー内ボタンのモバイル表示 */
+@media (max-width: 767px) {
+    .action-menu .btn {
+        display: block;
+        width: 100%;
+        margin-bottom: 0.3rem;
+        margin-right: 0 !important;
+    }
+}
