@@ -94,13 +94,13 @@ try {
             $comment = '';
 
             if ($work['start_time'] && $work['start_time'] != '00:00:00') {
-                $start_time = format_time($work['start_time']);
+                $start_time = format_time_24h($work['start_time']);
             }
             if ($work['end_time'] && $work['end_time'] != '00:00:00') {
-                $end_time = format_time($work['end_time']);
+                $end_time = format_time_24h($work['end_time']);
             }
             if ($work['break_time'] && $work['break_time'] != '00:00:00') {
-                $break_time = format_time($work['break_time']);
+                $break_time = format_time_24h($work['break_time']);
             }
             if ($work['work_type']) {
                 $work_type = getWorkTypeName($work['work_type']);
@@ -127,7 +127,7 @@ try {
                 if ($work['g_start'] == '00:00:00') {
                     $g_start = '00:00';
                 } else {
-                    $g_start = format_time($work['g_start']);
+                    $g_start = format_time_24h($work['g_start']);
                 }
             } else {
                 $g_start = $start_time;
@@ -138,7 +138,7 @@ try {
                 if ($work['g_end'] == '00:00:00') {
                     $g_end = '00:00';
                 } else {
-                    $g_end = format_time($work['g_end']);
+                    $g_end = format_time_24h($work['g_end']);
                 }
             } else {
                 $g_end = $end_time;
@@ -149,7 +149,7 @@ try {
                 if ($work['g_break'] == '00:00:00') {
                     $g_break = '00:00';
                 } else {
-                    $g_break = format_time($work['g_break']);
+                    $g_break = format_time_24h($work['g_break']);
                 }
             } else {
                 $g_break = $break_time;

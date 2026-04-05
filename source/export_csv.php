@@ -111,15 +111,15 @@ try {
             $work = $work_list[$currentDate];
 
             if ($work['start_time'] && $work['start_time'] != '00:00:00') {
-                $start_time = format_time($work['start_time']);
+                $start_time = format_time_24h($work['start_time']);
             }
 
             if ($work['end_time'] && $work['end_time'] != '00:00:00') {
-                $end_time = format_time($work['end_time']);
+                $end_time = format_time_24h($work['end_time']);
             }
 
             if ($work['break_time'] && $work['break_time'] != '00:00:00') {
-                $break_time = format_time($work['break_time']);
+                $break_time = format_time_24h($work['break_time']);
             }
 
             if ($work['work_type']) {

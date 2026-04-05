@@ -12,7 +12,11 @@ if (!function_exists('getWorkTypeName_local')) {
 if (!function_exists('format_time_local')) {
     function format_time_local($time) {
         if (!$time || $time == '00:00:00') return '';
-        return date('H:i', strtotime($time));
+        $parts = explode(':', $time);
+        if (count($parts) >= 2) {
+            return sprintf('%d:%02d', (int)$parts[0], (int)$parts[1]);
+        }
+        return $time;
     }
 }
 
@@ -28,14 +32,20 @@ if (!function_exists('minutesToTime_local')) {
 if (!function_exists('calculateWorkMinutes_local')) {
     function calculateWorkMinutes_local($start_time, $end_time, $break_time) {
         if (!$start_time || !$end_time) return 0;
-        
-        $start_minutes = date('H', strtotime($start_time)) * 60 + date('i', strtotime($start_time));
-        $end_minutes = date('H', strtotime($end_time)) * 60 + date('i', strtotime($end_time));
-        $break_minutes = 0;
-        if ($break_time) {
-            $break_minutes = date('H', strtotime($break_time)) * 60 + date('i', strtotime($break_time));
+
+        $start_parts = explode(':', $start_time);
+        $end_parts   = explode(':', $end_time);
+        $break_parts = $break_time ? explode(':', $break_time) : ['0', '0'];
+
+        $start_minutes = (int)$start_parts[0] * 60 + (int)$start_parts[1];
+        $end_minutes   = (int)$end_parts[0]   * 60 + (int)$end_parts[1];
+        $break_minutes = (int)$break_parts[0]  * 60 + (int)$break_parts[1];
+
+        // 退勤が出勤以下の場合は翌日扱い（24時間超の勤務対応）
+        if ($end_minutes <= $start_minutes) {
+            $end_minutes += 24 * 60;
         }
-        
+
         $work_minutes = $end_minutes - $start_minutes - $break_minutes;
         return $work_minutes > 0 ? $work_minutes : 0;
     }
@@ -480,7 +490,7 @@ try {
         $day_count = date('t');
     }
 
-    $sql = "SELECT date, id, start_time, end_time, break_time, comment FROM work WHERE user_id = :user_id AND DATE_FORMAT(date,'%Y-%m') = :date";
+    $sql = "SELECT date, id, start_time, end_time, break_time, work_type, comment FROM work WHERE user_id = :user_id AND DATE_FORMAT(date,'%Y-%m') = :date";
     $stmt = $pdo->prepare($sql);
     $stmt->bindValue(':user_id', (int)$user_id, PDO::PARAM_INT);
     $stmt->bindValue(':date', $yyyymm, PDO::PARAM_STR);
@@ -546,6 +556,7 @@ try {
             <thead>
                 <tr class="bg-light">
                     <th class="fix-col">日</th>
+                    <th class="fix-col">区分</th>
                     <th class="fix-col">出勤</th>
                     <th class="fix-col">退勤</th>
                     <th class="fix-col">休憩</th>
@@ -559,6 +570,7 @@ try {
                     $start_time = '';
                     $end_time = '';
                     $break_time = '';
+                    $work_type = '';
                     $comment = '';
                     $comment_long = '';
 
@@ -566,19 +578,20 @@ try {
                         $work = $work_list[date('Y-m-d', strtotime($yyyymm . '-' . $i))];
 
                         if ($work['start_time']) {
-                            $start_time = date('H:i', strtotime($work['start_time']));
+                            $start_time = format_time_local($work['start_time']);
                         }
-
 
                         if ($work['end_time']) {
-                            $end_time = date('H:i', strtotime($work['end_time']));
+                            $end_time = format_time_local($work['end_time']);
                         }
-
 
                         if ($work['break_time']) {
-                            $break_time = date('H:i', strtotime($work['break_time']));
+                            $break_time = format_time_local($work['break_time']);
                         }
 
+                        if ($work['work_type']) {
+                            $work_type = getWorkTypeName($work['work_type']);
+                        }
 
                         if ($work['comment']) {
                             $comment = mb_strimwidth($work['comment'], 0, 40, '…');
@@ -589,6 +602,7 @@ try {
                     ?>
                     <tr>
                         <th scope="row"><?php echo time_format_dw($yyyymm . '-' . $i) ?></th>
+                        <td><?php echo h($work_type) ?></td>
                         <td><?php echo $start_time ?></td>
                         <td><?php echo $end_time ?></td>
                         <td><?php echo $break_time ?></td>
@@ -687,10 +701,10 @@ try {
 
             //編集ボタンが押された対象日の表データを取得
             var day = button.closest('tr').children('th')[0].innerText
-            var start_time = button.closest('tr').children('td')[0].innerText
-            var end_time = button.closest('tr').children('td')[1].innerText
-            var break_time = button.closest('tr').children('td')[2].innerText
-            var comment = button.closest('tr').children('td')[4].innerText
+            var start_time = button.closest('tr').children('td')[1].innerText
+            var end_time = button.closest('tr').children('td')[2].innerText
+            var break_time = button.closest('tr').children('td')[3].innerText
+            var comment = button.closest('tr').children('td')[5].innerText
 
             //取得したデータをモーダルの各欄に設定
             $('#modal_day').text(day)
